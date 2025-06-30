@@ -26,3 +26,12 @@ class SocialMediaContract(ARC4Contract):
 
         # Global: total posts
         self.total_posts = GlobalState(UInt64)
+        @arc4.abimethod
+    def post_content(self, content_id: Bytes, content_hash: Bytes) -> None:
+        return (
+            self.content[content_id].set(content_hash),
+            self.upvotes[content_id].set(UInt64(0)),
+            self.downvotes[content_id].set(UInt64(0)),
+            self.total_posts.increment(),
+            self.reputation[Txn.sender()].increment(5)  # Posting increases reputation
+        )
