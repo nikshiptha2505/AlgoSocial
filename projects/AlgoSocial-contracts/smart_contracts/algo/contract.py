@@ -35,3 +35,17 @@ class SocialMediaContract(ARC4Contract):
             self.total_posts.increment(),
             self.reputation[Txn.sender()].increment(5)  # Posting increases reputation
         )
+        @arc4.abimethod
+    def vote(self, content_id: Bytes, is_upvote: UInt64) -> None:
+        # Unique vote key: sender + content_id
+        vote_key = Txn.sender().bytes() + content_id
+
+        return (
+            (self.voted[vote_key].get() == UInt64(0)).assert_(),
+            self.voted[vote_key].set(UInt64(1)),
+            (is_upvote == UInt64(1)).if_then_else(
+                self.upvotes[content_id].increment(),
+                self.downvotes[content_id].increment()
+            ),
+            self.reputation[Txn.sender()].increment(1)  # Voting gives minor rep
+        )
