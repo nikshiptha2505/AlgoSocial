@@ -49,3 +49,14 @@ class SocialMediaContract(ARC4Contract):
             ),
             self.reputation[Txn.sender()].increment(1)  # Voting gives minor rep
         )
+    @arc4.abimethod
+    def tip_creator(self, receiver: Address, amount: UInt64) -> None:
+        return (
+            (amount > UInt64(0)).assert_(),
+            self.tips_received[receiver].increment(amount),
+            itxn.AssetTransfer(
+                xfer_asset=ASSET_ID,
+                asset_amount=amount,
+                receiver=receiver
+            ).submit()
+        )
