@@ -60,3 +60,24 @@ class SocialMediaContract(ARC4Contract):
                 receiver=receiver
             ).submit()
         )
+    @arc4.abimethod
+    def upvote(self, content_id: Bytes, is_upvote: UInt64) -> None:
+        vote_key = Txn.sender().bytes() + content_id
+
+        return (
+            (self.voted[vote_key].get() == UInt64(0)).assert_(),
+            self.voted[vote_key].set(UInt64(1)),
+            (is_upvote == UInt64(1)).if_then_else(
+                (
+                    self.upvotes[content_id].increment(),
+                    self.reputation[Txn.sender()].increment(1),
+                    itxn.AssetTransfer(
+                        xfer_asset=ASSET_ID,
+                        asset_amount=UInt64(REWARD_PER_UPVOTE),
+                        receiver=self.creators[content_id].get()
+                    ).submit(),
+                    self.tips_received[self.creators[content_id].get()].increment(REWARD_PER_UPVOTE)
+                ),
+                self.downvotes[content_id].increment()
+            )
+        )
