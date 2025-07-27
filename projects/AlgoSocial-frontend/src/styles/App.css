@@ -1,126 +1,149 @@
-/* App.css */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-.hero {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #38b2ac;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-.hero-content {
-  text-align: center;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  max-width: 24rem;
-  background-color: #ffffff;
-  margin: 0 auto;
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
 }
 
-.text-4xl {
-  font-size: 2.25rem;
-  line-height: 2.5rem;
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
 }
 
-.font-bold {
-  font-weight: 700;
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
-.py-6 {
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+/* Custom animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(14, 165, 233, 0);
+  }
 }
 
-.grid {
-  display: grid;
+.pulse-glow {
+  animation: pulse-glow 2s infinite;
 }
 
-.btn {
-  margin: 0.5rem;
+/* Gradient backgrounds */
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.btn-primary {
-  background-color: #1a202c;
-  color: #fff;
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.divider {
-  border-top: 1px solid #e2e8f0;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: none;
-  z-index: 9999;
-  overflow: auto;
+/* Hover effects */
+.hover-lift {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-.modal-open {
-  display: block;
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-.modal-box {
-  margin: 2.5em auto;
-  background: #fff;
-  border-radius: 0.5em;
-  width: 40em;
-  max-width: 90vw;
-  padding: 1em;
+/* Loading spinner */
+.spinner {
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #0ea5e9;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
 }
 
-.font-bold {
-  font-weight: bold;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.text-2xl {
-  font-size: 1.5rem;
+/* Custom button styles */
+.btn-gradient {
+  background: linear-gradient(135deg, #0ea5e9 0%, #d946ef 100%);
+  border: none;
+  color: white;
+  transition: all 0.3s ease;
 }
 
-.m-2 {
-  margin: 0.5rem;
+.btn-gradient:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3);
 }
 
-.pt-5 {
-  padding-top: 1.25rem;
+/* Post card styles */
+.post-card {
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
 }
 
-.grid {
-  display: grid;
+.post-card:hover {
+  border-color: #0ea5e9;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
 }
 
-.btn {
-  margin: 0.5rem;
-  padding: 0.5rem 1rem;
-  background-color: #00aba2;
-  color: #fff;
+/* Profile avatar styles */
+.avatar-ring {
+  position: relative;
 }
 
-.btn-warning {
-  background-color: #d69e2e;
+.avatar-ring::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, #0ea5e9, #d946ef);
+  border-radius: 50%;
+  z-index: -1;
 }
 
-.border-1 {
-  border-width: 1px;
+/* Notification styles */
+.notification-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 2px solid white;
 }
 
-.border-teal-800 {
-  border-color: #2c7a7b;
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .mobile-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 
-.modal-action {
-  display: grid;
-  margin-top: 1rem;
-}
-
-.divider {
-  border-top: 1px solid #e2e8f0;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .dark-mode {
+    background-color: #1f2937;
+    color: #f9fafb;
+  }
 }
