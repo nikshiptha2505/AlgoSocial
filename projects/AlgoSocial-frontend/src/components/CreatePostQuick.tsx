@@ -1,20 +1,59 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useWallet } from '@txnlab/use-wallet-react'
+import { useSnackbar } from 'notistack'
 import { PlusIcon, PhotoIcon } from '@heroicons/react/24/outline'
+import { SocialMediaFactory } from '../contracts/SocialMedia'
+import { OnSchemaBreak, OnUpdate } from '@algorandfoundation/algokit-utils/types/app'
+import { getAlgodConfigFromViteEnvironment, getIndexerConfigFromViteEnvironment } from '../utils/network/getAlgoClientConfigs'
+import { AlgorandClient } from '@algorandfoundation/algokit-utils'
 
 const CreatePostQuick = () => {
   const [content, setContent] = useState('')
-  const { activeAddress } = useWallet()
+  const { activeAddress, transactionSigner } = useWallet()
   const navigate = useNavigate()
+  const { enqueueSnackbar } = useSnackbar()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const algodConfig = getAlgodConfigFromViteEnvironment()
+  const indexerConfig = getIndexerConfigFromViteEnvironment()
+  const algorand = AlgorandClient.fromConfig({
+    algodConfig,
+    indexerConfig,
+  })
+  algorand.setDefaultSigner(transactionSigner)
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (content.trim()) {
-      // Here you would typically call your smart contract
-      console.log('Creating post:', content)
+    if (!content.trim() || !activeAddress) return
+
+    try {
+      // For demo: generate content_id from timestamp
+      const contentId = `post-${Date.now()}`
+      const contentHash = content // ideally hash(content) in prod
+
+      const factory = new SocialMediaFactory({
+        defaultSender: activeAddress,
+        algorand,
+      })
+
+      const deployResult = await factory.deploy({
+        onSchemaBreak: OnSchemaBreak.AppendApp,
+        onUpdate: OnUpdate.AppendApp,
+      })
+
+      const { appClient } = deployResult
+
+      await appClient.send.post_content({
+        args: {
+          content_id: new Uint8Array(Buffer.from(contentId)),
+          content_hash: new Uint8Array(Buffer.from(contentHash)),
+        },
+      })
+
+      enqueueSnackbar('✅ Post created successfully!', { variant: 'success' })
       setContent('')
-      // Optionally refresh the feed or add the post optimistically
+    } catch (e: any) {
+      enqueueSnackbar(`❌ Error creating post: ${e.message}`, { variant: 'error' })
     }
   }
 
@@ -43,7 +82,7 @@ const CreatePostQuick = () => {
               rows={3}
               maxLength={280}
             />
-            
+
             <div className="flex items-center justify-between mt-4">
               <div className="flex items-center space-x-4">
                 <button
@@ -53,7 +92,7 @@ const CreatePostQuick = () => {
                   <PhotoIcon className="w-5 h-5" />
                   <span className="text-sm">Photo</span>
                 </button>
-                
+
                 <div className="text-sm text-gray-500">
                   {content.length}/280
                 </div>
@@ -67,7 +106,7 @@ const CreatePostQuick = () => {
                 >
                   Advanced
                 </button>
-                
+
                 <button
                   type="submit"
                   disabled={!content.trim() || content.length > 280}
