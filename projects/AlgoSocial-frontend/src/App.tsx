@@ -1,24 +1,25 @@
-import { SupportedWallet, WalletId, WalletManager, WalletProvider } from '@txnlab/use-wallet-react'
-import { SnackbarProvider } from 'notistack'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { getAlgodConfigFromViteEnvironment, getKmdConfigFromViteEnvironment } from './utils/network/getAlgoClientConfigs'
+import { SupportedWallet, WalletId, WalletManager, WalletProvider } from '@txnlab/use-wallet-react';
+import { SnackbarProvider } from 'notistack';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { getAlgodConfigFromViteEnvironment, getKmdConfigFromViteEnvironment } from './utils/network/getAlgoClientConfigs';
 
-// Import pages
-import Home from './pages/Home'
-import Feed from './pages/Feed'
-import Profile from './pages/Profile'
-import Explore from './pages/Explore'
-import Messages from './pages/Messages'
-import Settings from './pages/Settings'
-import CreatePost from './pages/CreatePost'
-import PostDetail from './pages/PostDetail'
+// Pages
+import Home from './pages/Home';
+import Feed from './pages/Feed';
+import Profile from './pages/Profile';
+import Explore from './pages/Explore';
+import Messages from './pages/Messages';
+import Settings from './pages/Settings';
+import CreatePost from './pages/CreatePost';
+import PostDetail from './pages/PostDetail';
 
-// Import layout
-import Layout from './components/Layout'
+// Layout
+import Layout from './components/Layout';
 
-let supportedWallets: SupportedWallet[]
+let supportedWallets: SupportedWallet[] = [];
+
 if (import.meta.env.VITE_ALGOD_NETWORK === 'localnet') {
-  const kmdConfig = getKmdConfigFromViteEnvironment()
+  const kmdConfig = getKmdConfigFromViteEnvironment();
   supportedWallets = [
     {
       id: WalletId.KMD,
@@ -28,17 +29,17 @@ if (import.meta.env.VITE_ALGOD_NETWORK === 'localnet') {
         port: String(kmdConfig.port),
       },
     },
-  ]
+  ];
 } else {
   supportedWallets = [
     { id: WalletId.DEFLY },
     { id: WalletId.PERA },
     { id: WalletId.EXODUS },
-  ]
+  ];
 }
 
 export default function App() {
-  const algodConfig = getAlgodConfigFromViteEnvironment()
+  const algodConfig = getAlgodConfigFromViteEnvironment();
 
   const walletManager = new WalletManager({
     wallets: supportedWallets,
@@ -55,7 +56,7 @@ export default function App() {
     options: {
       resetNetwork: true,
     },
-  })
+  });
 
   return (
     <SnackbarProvider maxSnack={3}>
@@ -79,5 +80,5 @@ export default function App() {
         </Router>
       </WalletProvider>
     </SnackbarProvider>
-  )
+  );
 }
